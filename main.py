@@ -1,4 +1,4 @@
-from random import randrange, choice, choices
+from random import randrange, choice, choices, shuffle
 import datetime, csv
 
 
@@ -84,7 +84,7 @@ for i, key in enumerate(pay_systems["Visa"].keys()):
 passports = []
 cities_file = open("data/cities.txt", mode="r", encoding="utf8")
 cities = cities_file.readlines()
-start_date = '2024-04-03'
+start_date = '2023-05-03'
 finish_date = '2024-05-03'
 date = []
 start = datetime.datetime.strptime(start_date, '%Y-%m-%d')
@@ -98,6 +98,8 @@ seats_reserved = []
 cities_flights = []
 time_flights = []
 nums_flights = [i for i in range(1, 299)] + [i for i in range(301, 599)] + [i for i in range(701, 799)]
+random_nums_flights = nums_flights.copy()
+shuffle(random_nums_flights)
 for _ in range(len(nums_flights)):
     seats_reserved.append([])
     time_1, time_2 = get_random_datetime()
@@ -115,14 +117,15 @@ for payment in pay_systems.keys():
     for bank in pay_systems[payment].keys():
         all_card_variants.append([payment, bank])
         weights.append(payments_chance[payment] * banks_chance[bank])
-file = open("dataset.csv", mode="w", encoding="utf8")
+file = open("dataset60.csv", mode="w", encoding="utf8")
 file_writer = csv.writer(file, delimiter=";")
 if dataset_size <= 680000:
     for i in range(dataset_size):
         person = []
         person.extend(list(get_random_person()))
         while True:
-            random_flight = choice(nums_flights[:dataset_size // 1000 + 14])
+
+            random_flight = choice(random_nums_flights[:dataset_size // 1000 + 14])
             index_flight = nums_flights.index(random_flight)
             seat = str(randrange(1, 11)) + "-" + str(randrange(1, 101))
             if seat not in seats_reserved[index_flight]:
